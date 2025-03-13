@@ -1,12 +1,310 @@
-@import 'tailwindcss';
+/* Estilos base */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source "../**/*.blade.php";
-@source "../**/*.js";
-@source "../**/*.vue";
-
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@layer base {
+    body {
+        @apply font-sans transition-colors duration-500 ease-in-out;
+    }
 }
+
+/* Tema oscuro por defecto */
+body.dark {
+    background-color: #000000; /* Negro puro */
+    color: #FFFFFF; /* Texto blanco */
+}
+
+.dark .bg-card {
+    background-color: #1C2526; /* Gris oscuro profundo para cards */
+}
+
+.dark .bg-main {
+    background-color: #0F1415; /* Negro azulado oscuro para fondo principal */
+}
+
+.dark .bg-sidebar {
+    background-color: #1A1A1A; /* Negro oscuro para sidebar */
+}
+
+.dark .text-white {
+    color: #FFFFFF;
+}
+
+.dark .text-gray-400 {
+    color: #A3A3A3;
+}
+
+.dark .text-green-500 {
+    color: #34D399; /* Verde neón suave */
+}
+
+.dark .text-red-500 {
+    color: #F87171; /* Rojo coral */
+}
+
+.dark .hover:bg-card:hover {
+    background-color: #2D3A3B;
+}
+
+.dark .border-accent {
+    border-color: #34D399;
+}
+
+.dark .shadow-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Tema claro */
+body.light {
+    background-color: #FFFFFF; /* Blanco puro */
+    color: #000000; /* Texto negro */
+}
+
+.light .bg-card {
+    background-color: #F9FAFB; /* Gris muy claro para cards */
+}
+
+.light .bg-main {
+    background-color: #FFFFFF; /* Blanco puro para fondo principal */
+}
+
+.light .bg-sidebar {
+    background-color: #F9FAFB; /* Blanco claro para sidebar en modo claro */
+}
+
+.light .text-white {
+    color: #000000;
+}
+
+.light .text-gray-400 {
+    color: #6B7280;
+}
+
+.light .text-green-500 {
+    color: #10B981; /* Verde natural */
+}
+
+.light .text-red-500 {
+    color: #EF4444; /* Rojo intenso */
+}
+
+.light .hover:bg-card:hover {
+    background-color: #E5E7EB;
+}
+
+.light .border-accent {
+    border-color: #10B981;
+}
+
+.light .shadow-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Animaciones y efectos */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+    50% { box-shadow: 0 0 0 5px rgba(52, 211, 153, 0); }
+}
+
+.animate-pulseBorder {
+    animation: pulseBorder 2s infinite;
+}
+
+/* Estilos personalizados para componentes */
+.card {
+    @apply bg-card rounded-xl p-6 shadow-card transition-all duration-300;
+}
+
+.chart-container {
+    @apply bg-card rounded-xl p-6 shadow-card overflow-hidden;
+}
+
+.sidebar {
+    @apply bg-sidebar w-64 p-6 transition-all duration-300 h-screen fixed;
+}
+
+.sidebar-item {
+    @apply block p-3 rounded-lg text-white dark:text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-200;
+}
+
+.sidebar-item-active {
+    @apply bg-gray-700 dark:bg-gray-600 text-white;
+
+}
+
+body.dark {
+    background-color: #000000; /* Negro puro */
+    color: #FFFFFF; /* Texto blanco */
+}
+
+.dark .bg-card {
+    background-color: #1C2526; /* Gris oscuro profundo para cards */
+}
+
+.dark .bg-main {
+    background-color: #0F1415; /* Negro azulado oscuro para fondo principal */
+}
+
+.dark .bg-sidebar {
+    background-color: #1A1A1A; /* Negro oscuro para sidebar */
+}
+
+.dark .text-white {
+    color: #FFFFFF;
+}
+
+.dark .text-gray-400 {
+    color: #A3A3A3;
+}
+
+.dark .text-green-500 {
+    color: #34D399; /* Verde neón suave */
+}
+
+.dark .text-red-500 {
+    color: #F87171; /* Rojo coral */
+}
+
+.dark .hover:bg-card:hover {
+    background-color: #2D3A3B;
+}
+
+.dark .border-accent {
+    border-color: #34D399;
+}
+
+.dark .shadow-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Tema claro */
+body.light {
+    background-color: #FFFFFF; /* Blanco puro */
+    color: #000000; /* Texto negro */
+}
+
+.light .bg-card {
+    background-color: #F9FAFB; /* Gris muy claro para cards */
+}
+
+.light .bg-main {
+    background-color: #FFFFFF; /* Blanco puro para fondo principal */
+}
+
+.light .bg-sidebar {
+    background-color: #F9FAFB; /* Blanco claro para sidebar en modo claro */
+}
+
+.light .text-white {
+    color: #000000;
+}
+
+.light .text-gray-400 {
+    color: #6B7280;
+}
+
+.light .text-green-500 {
+    color: #10B981; /* Verde natural */
+}
+
+.light .text-red-500 {
+    color: #EF4444; /* Rojo intenso */
+}
+
+.light .hover:bg-card:hover {
+    background-color: #E5E7EB;
+}
+
+.light .border-accent {
+    border-color: #10B981;
+}
+
+.light .shadow-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* ... (otros estilos) ... */
+
+/* Estilos personalizados para componentes */
+.card {
+    @apply bg-card rounded-xl p-6 shadow-card transition-all duration-300;
+}
+
+.chart-container {
+    @apply bg-card rounded-xl p-6 shadow-card overflow-hidden;
+}
+
+.sidebar {
+    @apply bg-sidebar w-64 p-6 transition-all duration-300 h-screen fixed;
+}
+
+.sidebar-item {
+    @apply block p-3 rounded-lg text-white dark:text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-200;
+}
+
+.sidebar-item-active {
+    @apply bg-gray-700 dark:bg-gray-600 text-white;
+}
+
+/* Ajuste para modo claro: texto negro */
+.light .sidebar-item {
+    @apply text-black;
+}
+
+.light .sidebar-item-active {
+    @apply text-black;
+}
+
+/* ... (estilos existentes) ... */
+
+/* Estilos para tablas y formularios de ventas */
+.table-product {
+    @apply w-full text-left border-collapse;
+}
+
+.table-product th,
+.table-product td {
+    @apply py-2 px-4;
+}
+
+.table-product th {
+    @apply bg-gray-100 dark:bg-gray-700 font-semibold;
+}
+
+.table-product tr:hover {
+    @apply bg-gray-50 dark:bg-gray-800;
+}
+
+.form-product {
+    @apply space-y-4;
+}
+
+.form-product input,
+.form-product textarea,
+.form-product select {
+    @apply w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-black dark:text-white bg-white dark:bg-gray-800;
+}
+
+.form-product input[type="date"] {
+    @apply cursor-pointer;
+}
+
+.form-product button {
+    @apply py-2 rounded-lg transition-all duration-300;
+}
+
+/* Estilos específicos para ventas */
+#product-items .flex {
+    @apply items-center space-x-4;
+}
+
+/* ... (resto de los estilos existentes) ... */
