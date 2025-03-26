@@ -11,19 +11,19 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Product::with('category', 'supplier')->active();
+{
+    $query = Product::with('category', 'supplier')->active();
 
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%");
-        }
-
-        $products = $query->paginate(10);
-        return view('products.index', compact('products'));
+    if ($request->has('search')) {
+        $search = $request->input('search');
+        $query->where('name', 'like', "%{$search}%")
+              ->orWhere('code', 'like', "%{$search}%");
     }
 
+    $products = $query->paginate(10);
+    dd($products); // Agrega esto para inspeccionar los datos
+    return view('products.index', compact('products'));
+}
     public function create()
 {
     if (!class_exists('App\Models\Product')) {
