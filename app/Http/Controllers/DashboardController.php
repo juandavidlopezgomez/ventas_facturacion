@@ -9,10 +9,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalClients = Client::count();
-        $activeClients = Client::where('status', 1)->count();
-        $newClients = Client::where('created_at', '>=', now()->subMonth())->count();
+        $activeClients = Client::where('status', true)->count();
+        $clientsChange = 1; // Placeholder for percentage change
 
-        return view('dashboard.index', compact('totalClients', 'activeClients', 'newClients'));
+        return view('dashboard', compact('activeClients', 'clientsChange'));
     }
 }

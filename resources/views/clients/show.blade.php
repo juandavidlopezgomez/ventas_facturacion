@@ -1,54 +1,56 @@
 @extends('layouts.app')
 
-@section('title', 'Detalles de Cliente')
+@section('title', 'Detalles del Cliente')
+
+@section('header-title', 'Detalles del Cliente')
 
 @section('content')
-<div class="container mx-auto px-4">
-    <h1 class="text-3xl font-bold mb-6">Detalles de Cliente</h1>
-
-    <!-- Información del cliente -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <h2 class="text-xl font-bold mb-2">Nombre</h2>
-                <p class="text-gray-600 dark:text-gray-400">{{ $client->name }}</p>
-            </div>
-            <div>
-                <h2 class="text-xl font-bold mb-2">Email</h2>
-                <p class="text-gray-600 dark:text-gray-400">{{ $client->email }}</p>
-            </div>
-            <div>
-                <h2 class="text-xl font-bold mb-2">Teléfono</h2>
-                <p class="text-gray-600 dark:text-gray-400">{{ $client->phone }}</p>
-            </div>
-            <div>
-                <h2 class="text-xl font-bold mb-2">Dirección</h2>
-                <p class="text-gray-600 dark:text-gray-400">{{ $client->address }}</p>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class="bg-white shadow-md rounded-lg p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Nombre</h3>
+                                <p class="text-gray-900">{{ $client->name }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Email</h3>
+                                <p class="text-gray-900">{{ $client->email }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Teléfono</h3>
+                                <p class="text-gray-900">{{ $client->phone ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Dirección</h3>
+                                <p class="text-gray-900">{{ $client->address ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Tipo de Bicicleta Preferida</h3>
+                                <p class="text-gray-900">{{ $client->preferred_bike_type ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Miembro de Lealtad</h3>
+                                <p class="text-gray-900">{{ $client->is_loyalty_member ? 'Sí' : 'No' }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Total de Compras</h3>
+                                <p class="text-gray-900">${{ number_format($client->total_purchases, 2) }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700">Estado</h3>
+                                <p class="text-gray-900">{{ $client->status ? 'Activo' : 'Inactivo' }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <a href="{{ route('clients.edit', $client) }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors">Editar</a>
+                            <a href="{{ route('clients.index') }}" class="ml-2 text-gray-500 hover:underline">Volver</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Historial de compras -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h2 class="text-xl font-bold mb-4">Historial de Compras</h2>
-        <table class="min-w-full">
-            <thead class="bg-gray-100 dark:bg-gray-700">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                @foreach ($client->sales as $sale)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        <td class="px-6 py-4">{{ $sale->id }}</td>
-                        <td class="px-6 py-4">${{ number_format($sale->total, 2) }}</td>
-                        <td class="px-6 py-4">{{ $sale->created_at->format('d/m/Y') }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
 @endsection

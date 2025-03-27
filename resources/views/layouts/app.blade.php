@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Sistema de Facturación')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/sales.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="font-sans bg-white text-gray-800 transition-colors duration-300 ease-in-out">
@@ -66,42 +66,6 @@
                                     </svg>
                                 </span>
                                 <span x-show="!isSidebarCollapsed && isSidebarOpen" class="menu-text font-semibold text-white">Clientes</span>
-                                <span class="menu-hover-indicator"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('products.index') }}" 
-                               class="menu-item group flex items-center justify-center {{ request()->routeIs('products.*') ? 'menu-item-active' : '' }}">
-                                <span class="icon-wrapper w-10 h-10 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="menu-icon w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                    </svg>
-                                </span>
-                                <span x-show="!isSidebarCollapsed && isSidebarOpen" class="menu-text font-semibold text-white">Productos</span>
-                                <span class="menu-hover-indicator"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('sales.index') }}" 
-                               class="menu-item group flex items-center justify-center {{ request()->routeIs('sales.*') ? 'menu-item-active' : '' }}">
-                                <span class="icon-wrapper w-10 h-10 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="menu-icon w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                </span>
-                                <span x-show="!isSidebarCollapsed && isSidebarOpen" class="menu-text font-semibold text-white">Ventas</span>
-                                <span class="menu-hover-indicator"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('invoices.index') }}" 
-                               class="menu-item group flex items-center justify-center {{ request()->routeIs('invoices.*') ? 'menu-item-active' : '' }}">
-                                <span class="icon-wrapper w-10 h-10 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="menu-icon w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </span>
-                                <span x-show="!isSidebarCollapsed && isSidebarOpen" class="menu-text font-semibold text-white">Facturas</span>
                                 <span class="menu-hover-indicator"></span>
                             </a>
                         </li>
