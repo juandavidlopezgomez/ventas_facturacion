@@ -2,41 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Verificación crítica
+use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Milon\Barcode\Facades\DNS1DFacade;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
-{
-    $query = Product::with('category', 'supplier')->active();
+    {
+        $query = Product::with('category', 'supplier')->active();
 
-    if ($request->has('search')) {
-        $search = $request->input('search');
-        $query->where('name', 'like', "%{$search}%")
-              ->orWhere('code', 'like', "%{$search}%");
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%")
+                  ->orWhere('barcode', 'like', "%{$search}%");
+            });
+        }
+
+        $products = $query->paginate(10);
+        return view('products.index', compact('products'));
     }
 
-    $products = $query->paginate(10);
-    dd($products); // Agrega esto para inspeccionar los datos
-    return view('products.index', compact('products'));
-}
     public function create()
-{
-    if (!class_exists('App\Models\Product')) {
-        dd('Clase Product no encontrada. Verifica app/Models/Product.php');
+    {
+        $categories = Category::all();
+        $suppliers = Supplier::all();
+        return view('products.create', compact('categories', 'suppliers'));
     }
-    $categories = Category::all();
-    $suppliers = Supplier::all();
-    return view('products.create', compact('categories', 'suppliers'));
-}
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'code' => 'required|unique:products,code',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -47,18 +48,28 @@ class ProductController extends Controller
             'expiration_date' => 'nullable|date',
             'status' => 'required|boolean',
             'image' => 'nullable|image|max:2048',
+            'barcode' => 'nullable|unique:products,barcode',
+            'barcode_image' => 'nullable|image|max:2048'
         ]);
 
-        $data = $request->all();
+        // Handle image upload
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
-        } else {
-            $data['image'] = null;
+            $validatedData['image'] = $request->file('image')->store('products', 'public');
         }
 
-        Product::create($data);
+        // Handle barcode image upload
+        if ($request->hasFile('barcode_image')) {
+            $validatedData['barcode_image'] = $request->file('barcode_image')->store('barcodes', 'public');
+        }
 
-        return redirect()->route('products.index')->with('success', 'Producto agregado correctamente.');
+        // Generate barcode if not provided
+        if (!isset($validatedData['barcode'])) {
+            $validatedData['barcode'] = $this->generateUniqueBarcode();
+        }
+
+        $product = Product::create($validatedData);
+
+        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente');
     }
 
     public function show(Product $product)
@@ -75,7 +86,7 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'code' => 'required|unique:products,code,' . $product->id,
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -86,27 +97,89 @@ class ProductController extends Controller
             'expiration_date' => 'nullable|date',
             'status' => 'required|boolean',
             'image' => 'nullable|image|max:2048',
+            'barcode' => 'nullable|unique:products,barcode,' . $product->id,
+            'barcode_image' => 'nullable|image|max:2048'
         ]);
 
-        $data = $request->all();
+        // Handle image upload
         if ($request->hasFile('image')) {
+            // Delete old image if exists
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $validatedData['image'] = $request->file('image')->store('products', 'public');
         }
 
-        $product->update($data);
+        // Handle barcode image upload
+        if ($request->hasFile('barcode_image')) {
+            // Delete old barcode image if exists
+            if ($product->barcode_image) {
+                Storage::disk('public')->delete($product->barcode_image);
+            }
+            $validatedData['barcode_image'] = $request->file('barcode_image')->store('barcodes', 'public');
+        }
 
-        return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
+        // Generate barcode if not provided
+        if (!isset($validatedData['barcode'])) {
+            $validatedData['barcode'] = $this->generateUniqueBarcode();
+        }
+
+        $product->update($validatedData);
+
+        return redirect()->route('products.index')->with('success', 'Producto actualizado exitosamente');
     }
 
     public function destroy(Product $product)
     {
+        // Delete associated images
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
+        
+        if ($product->barcode_image) {
+            Storage::disk('public')->delete($product->barcode_image);
+        }
+
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
+        return redirect()->route('products.index')->with('success', 'Producto eliminado exitosamente');
+    }
+
+    public function generateBarcode(Request $request)
+    {
+        $type = $request->input('type', 'EAN13');
+        $code = $request->input('code', $this->generateUniqueBarcode());
+
+        try {
+            $barcode = DNS1DFacade::getBarcodePNGPath($code, $type);
+            return response()->json([
+                'success' => true,
+                'barcode' => $code,
+                'barcode_path' => $barcode
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error generando código de barras'
+            ], 500);
+        }
+    }
+
+    private function generateUniqueBarcode()
+    {
+        do {
+            $barcode = str_pad(mt_rand(1, 9999999999999), 13, '0', STR_PAD_LEFT);
+        } while (Product::where('barcode', $barcode)->exists());
+
+        return $barcode;
+    }
+
+    public function export()
+    {
+        // Implementar exportación de productos a Excel/CSV
+    }
+
+    public function import(Request $request)
+    {
+        // Implementar importación de productos desde Excel/CSV
     }
 }

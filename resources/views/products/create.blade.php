@@ -1,99 +1,91 @@
 @extends('layouts.app')
 
-@section('title', 'Crear Producto')
-@section('header-title', 'Crear Nuevo Producto')
-
 @section('content')
-    <div class="max-w-2xl mx-auto bg-card p-6 rounded-lg shadow-card animate-fadeIn">
-        <h2 class="text-2xl font-bold mb-6">Nuevo Producto</h2>
-        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="form-product">
-                <div class="mb-4">
-                    <label for="code" class="block text-sm font-medium mb-1">Código</label>
-                    <input type="text" name="code" id="code" value="{{ old('code') }}" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" required>
-                    @error('code')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg">
+                <div class="card-header bg-gradient-primary">
+                    <h3 class="card-title">Nuevo Producto</h3>
                 </div>
-                <div class="mb-4">
-                    <label for="name" class="block text-sm font-medium mb-1">Nombre</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" required>
-                    @error('name')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                
+                <div class="card-body">
+                    <form id="productForm" method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
+                        @csrf
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Código de Producto -->
+                                <div class="form-group">
+                                    <label>Código de Producto</label>
+                                    <div class="input-group">
+                                        <input type="text" name="code" value="{{ $newProductCode }}" class="form-control" readonly>
+                                        <div class="input-group-append">
+                                            <button type="button" id="generateBarcodeBtn" class="btn btn-outline-secondary">
+                                                <i class="fas fa-barcode"></i> Generar Código
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Lector de Código de Barras -->
+                                <div class="form-group">
+                                    <label>Escanear Código de Barras</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="barcodeScanner" accept="image/*">
+                                        <label class="custom-file-label" for="barcodeScanner">
+                                            <i class="fas fa-camera"></i> Escanear
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resto de campos -->
+                    </form>
                 </div>
-                <div class="mb-4">
-                    <label for="description" class="block text-sm font-medium mb-1">Descripción</label>
-                    <textarea name="description" id="description" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" rows="4">{{ old('description') }}</textarea>
-                    @error('description')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="price" class="block text-sm font-medium mb-1">Precio</label>
-                    <input type="number" step="0.01" name="price" id="price" value="{{ old('price') }}" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" required>
-                    @error('price')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="stock" class="block text-sm font-medium mb-1">Stock</label>
-                    <input type="number" name="stock" id="stock" value="{{ old('stock') }}" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" required>
-                    @error('stock')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="category_id" class="block text-sm font-medium mb-1">Categoría</label>
-                    <select name="category_id" id="category_id" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" required>
-                        <option value="" disabled {{ old('category_id') === null ? 'selected' : '' }}>Selecciona una categoría</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('category_id')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="supplier_id" class="block text-sm font-medium mb-1">Proveedor</label>
-                    <select name="supplier_id" id="supplier_id" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" required>
-                        <option value="" disabled {{ old('supplier_id') === null ? 'selected' : '' }}>Selecciona un proveedor</option>
-                        @foreach ($suppliers as $supplier)
-                            <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('supplier_id')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="expiration_date" class="block text-sm font-medium mb-1">Fecha de Expiración</label>
-                    <input type="date" name="expiration_date" id="expiration_date" value="{{ old('expiration_date') }}" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800 cursor-pointer">
-                    @error('expiration_date')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="status" class="block text-sm font-medium mb-1">Estado</label>
-                    <select name="status" id="status" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800" required>
-                        <option value="1" {{ old('status', 1) == 1 ? 'selected' : '' }}>Activo</option>
-                        <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Inactivo</option>
-                    </select>
-                    @error('status')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="image" class="block text-sm font-medium mb-1">Imagen</label>
-                    <input type="file" name="image" id="image" class="w-full p-2 border border-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white bg-white dark:bg-gray-800">
-                    @error('image')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition-all duration-300">Crear Producto</button>
             </div>
-        </form>
+        </div>
     </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Lógica de escáner de código de barras
+    const barcodeScanner = document.getElementById('barcodeScanner');
+    
+    barcodeScanner.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            // Usar Quagga.js para escanear código de barras
+            Quagga.decodeSingle({
+                decoder: {
+                    readers: ["ean_reader"] // Puedes cambiar según necesites
+                },
+                locate: true,
+                src: URL.createObjectURL(file)
+            }, function(result) {
+                if (result && result.codeResult) {
+                    document.getElementById('barcode').value = result.codeResult.code;
+                }
+            });
+        }
+    });
+
+    // Generar código de barras
+    document.getElementById('generateBarcodeBtn').addEventListener('click', function() {
+        fetch('/products/generate-barcode', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Mostrar código de barras generado
+            document.getElementById('barcode').value = data.barcode;
+        });
+    });
+});
+</script>
+@endpush
